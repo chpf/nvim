@@ -25,7 +25,7 @@ vim.opt.inccommand = "nosplit"
 -- vim.opt.listchars:append("tab:▸")
 vim.opt.list = true
 vim.opt.laststatus = 3
-vim.opt.background = "light"
+--vim.opt.background = "dark"
 
 -- mappings
 vim.api.nvim_set_keymap('n', '<Tab>', 'gt', { noremap = true, silent = true })
@@ -114,94 +114,35 @@ vim.api.nvim_create_autocmd({ "BufReadPost" }, {
     end
 })
 
--- Use an on_attach function to only map the following keys
--- after the language server attaches to the current buffer
-local on_attach = function(client, bufnr)
-    -- local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
-    local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
-
-    -- Enable completion triggered by <c-x><c-o>
-    buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
-
-    vim.keymap.set('n', 'gD', function() vim.lsp.buf.declaration() end, { buffer = true })
-    vim.keymap.set('n', 'gd', function() vim.lsp.buf.definition() end, { buffer = true })
-    vim.keymap.set('n', 'gr', function() vim.lsp.buf.references() end, { buffer = true })
-    vim.keymap.set('n', 'gi', function() vim.lsp.buf.implementation() end, { buffer = true })
-    vim.keymap.set('n', 'K', function() vim.lsp.buf.hover() end, { buffer = true })
-    vim.keymap.set('n', '<C-k>', function() vim.lsp.buf.signature_help() end, { buffer = true })
-    vim.keymap.set('n', 'gT', function() vim.lsp.buf.type_definition() end, { buffer = true })
-    vim.keymap.set('n', '<F2>', function() vim.lsp.buf.rename() end, { buffer = true })
-    vim.keymap.set('n', '<leader>ca', function() vim.lsp.buf.code_action() end, { buffer = true })
-    vim.keymap.set('n', '<leader>e', function() vim.diagnostic.open_float() end, { buffer = true })
-    vim.keymap.set('n', ']d', function() vim.diagnostic.goto_next() end, { buffer = true })
-    vim.keymap.set('n', '[d', function() vim.diagnostic.goto_prev() end, { buffer = true })
-    vim.keymap.set('n', '<leader>f', function() vim.lsp.buf.format({async=true}) end, { buffer = true })
-end
-
-
--- lspconfig
-local nvim_lsp = require('lspconfig')
-local coq = require('coq')
-
--- Use a loop to conveniently call 'setup' on multiple servers and
--- map buffer local keybindings when the language server attaches
-local servers = { 'gopls', 'rust_analyzer', 'zls', 'clangd', 'hls', 'bashls' }
-for _, lsp in ipairs(servers) do
-    nvim_lsp[lsp].setup(
-        coq.lsp_ensure_capabilities({
-            on_attach = on_attach,
-        })
-    )
-end
-
---- LUA lsp CONFIG outside of loop, since it needs specific setup
-local runtime_path = vim.split(package.path, ';')
-table.insert(runtime_path, "lua/?.lua")
-table.insert(runtime_path, "lua/?/init.lua")
-nvim_lsp.sumneko_lua.setup(
-    coq.lsp_ensure_capabilities({
-        on_attach = on_attach,
-        settings = {
-            Lua = {
-                runtime = {
-                    version = 'LuaJIT',
-                    path = runtime_path,
-                },
-                diagnostics = {
-                    globals = { 'vim' },
-                },
-                workspace = {
-                    library = vim.api.nvim_get_runtime_file("", true),
-                },
-                telemetry = {
-                    enable = false,
-                },
-            },
-        }
-    }
-    ))
 
 -- Packer conig
 --
 require('packer').startup(function(use)
     use { 'https://github.com/rebelot/kanagawa.nvim',
+        disable = true,
         config = function()
-            -- require('kanagawa').setup({
-            --     undercurl = true,
-            --     commentStyle = "NONE",
-            --     functionStyle = "NONE",
-            --     keywordStyle = "NONE",
-            --     statementStyle = "bold",
-            --     typeStyle = "NONE",
-            --     variablebuiltinStyle = "NONE",
-            --     specialReturn = false,
-            --     specialException = false,
-            --     transparent = true,
-            -- })
-            -- vim.cmd("colorscheme kanagawa")
-        end
+            require('kanagawa').setup({
+                undercurl = true,           -- enable undercurls
+                commentStyle = { italic = false },
+                functionStyle = {},
+                keywordStyle = { italic = false},
+                statementStyle = { bold = true },
+                typeStyle = {},
+                variablebuiltinStyle = { italic = false},
+                specialReturn = true,       -- special highlight for the return keyword
+                specialException = true,    -- special highlight for exception handling keywords
+                transparent = false,        -- do not set background color
+                dimInactive = false,        -- dim inactive window `:h hl-NormalNC`
+                globalStatus = false,       -- adjust window separators highlight for laststatus=3
+                colors = {},
+                overrides = {},
+            })
+        end,
+        run = "colorscheme kanagawa"
     }
+    use {'https://github.com/NLKNguyen/papercolor-theme', disable = true}
     use { 'https://github.com/projekt0n/github-nvim-theme',
+        disable = false,
         config = function()
             require('github-theme').setup({
                 dark_sidebar = false,
@@ -222,11 +163,74 @@ require('packer').startup(function(use)
             vim.keymap.set('x', 'ga', '<Plug>(EasyAlign)')
         end }
     use 'wbthomason/packer.nvim'
-    use 'https://github.com/NLKNguyen/papercolor-theme'
     use 'kyazdani42/nvim-web-devicons'
     use 'ziglang/zig.vim'
     use { 'kevinhwang91/nvim-bqf', ft = 'qf' }
-    use 'neovim/nvim-lspconfig'
+    use {'neovim/nvim-lspconfig', require= {'ms-jpq/coq_nvim' },
+        after = 'coq_nvim',
+        config = function()
+            local nvim_lsp = require('lspconfig')
+            local coq = require('coq')
+            -- Use an on_attach function to only map the following keys
+            -- after the language server attaches to the current buffer
+            local on_attach = function(client, bufnr)
+                -- local function buf_set_keymap(...) vim.api.nvim_buf_set_keymap(bufnr, ...) end
+                local function buf_set_option(...) vim.api.nvim_buf_set_option(bufnr, ...) end
+
+                -- Enable completion triggered by <c-x><c-o>
+                buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
+
+                vim.keymap.set('n', 'gD', function() vim.lsp.buf.declaration() end, { buffer = true })
+                vim.keymap.set('n', 'gd', function() vim.lsp.buf.definition() end, { buffer = true })
+                vim.keymap.set('n', 'gr', function() vim.lsp.buf.references() end, { buffer = true })
+                vim.keymap.set('n', 'gi', function() vim.lsp.buf.implementation() end, { buffer = true })
+                vim.keymap.set('n', 'K', function() vim.lsp.buf.hover() end, { buffer = true })
+                vim.keymap.set('n', '<C-k>', function() vim.lsp.buf.signature_help() end, { buffer = true })
+                vim.keymap.set('n', 'gT', function() vim.lsp.buf.type_definition() end, { buffer = true })
+                vim.keymap.set('n', '<F2>', function() vim.lsp.buf.rename() end, { buffer = true })
+                vim.keymap.set('n', '<leader>ca', function() vim.lsp.buf.code_action() end, { buffer = true })
+                vim.keymap.set('n', '<leader>e', function() vim.diagnostic.open_float() end, { buffer = true })
+                vim.keymap.set('n', ']d', function() vim.diagnostic.goto_next() end, { buffer = true })
+                vim.keymap.set('n', '[d', function() vim.diagnostic.goto_prev() end, { buffer = true })
+                vim.keymap.set('n', '<leader>f', function() vim.lsp.buf.format({async=true}) end, { buffer = true })
+            end
+            -- attach servers via loop
+            local servers = { 'gopls', 'rust_analyzer', 'zls', 'clangd', 'hls', 'bashls' }
+            for _, lsp in ipairs(servers) do
+                nvim_lsp[lsp].setup(
+                    coq.lsp_ensure_capabilities({
+                        on_attach = on_attach,
+                    })
+                )
+            end
+            --- LUA lsp CONFIG outside of loop, since it needs specific setup
+            local runtime_path = vim.split(package.path, ';')
+            table.insert(runtime_path, "lua/?.lua")
+            table.insert(runtime_path, "lua/?/init.lua")
+            nvim_lsp.sumneko_lua.setup(
+                coq.lsp_ensure_capabilities({
+                    on_attach = on_attach,
+                    settings = {
+                        Lua = {
+                            runtime = {
+                                version = 'LuaJIT',
+                                path = runtime_path,
+                            },
+                            diagnostics = {
+                                globals = { 'vim' },
+                            },
+                            workspace = {
+                                library = vim.api.nvim_get_runtime_file("", true),
+                            },
+                            telemetry = {
+                                enable = false,
+                            },
+                        },
+                    }
+                })
+            )
+        end
+    }
     use { 'ms-jpq/coq_nvim',
         run = ':COQdeps'
     }
@@ -239,8 +243,8 @@ require('packer').startup(function(use)
         config = function()
             require('lualine').setup({
                 options = {
-                    -- theme='kanagawa',
-                    theme = 'onelight',
+                    --theme='kanagawa',
+                     theme = 'onelight',
                     section_separators = '',
                     component_separators = '',
                     -- globalstatus=true
@@ -320,7 +324,7 @@ require('packer').startup(function(use)
             vim.keymap.set("n", "<F11>", function() dap.step_into() end)
         end
     }
-    use { "rcarriga/nvim-dap-ui", requires = {"mfussenegger/nvim-dap"} }
+    use { "rcarriga/nvim-dap-ui", requires = {"mfussenegger/nvim-dap"}, after='nvim-dap' }
     use { "theHamsta/nvim-dap-virtual-text", requires = {"mfussenegger/nvim-dap", "nvim-treesitter/nvim-treesitter"},
         config = function()
             require("nvim-dap-virtual-text").setup()
