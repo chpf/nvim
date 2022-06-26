@@ -94,6 +94,13 @@ vim.api.nvim_create_autocmd({ "BufWrite" }, {
     end
 })
 
+-- auto relead vim config
+vim.api.nvim_create_autocmd({"BufWritePost"}, {
+    group = au_group,
+    pattern = "init.lua",
+    command = "source <afile> | PackerCompile"
+})
+
 -- toggle open/close  the quickfix window with
 local toggle_qlist = '<leader>q'
 vim.api.nvim_set_keymap('n', toggle_qlist, '<cmd>copen<CR>', { noremap = true, silent = true })
@@ -128,7 +135,7 @@ local on_attach = function(client, bufnr)
     vim.keymap.set('n', '<leader>e', function() vim.diagnostic.open_float() end, { buffer = true })
     vim.keymap.set('n', ']d', function() vim.diagnostic.goto_next() end, { buffer = true })
     vim.keymap.set('n', '[d', function() vim.diagnostic.goto_prev() end, { buffer = true })
-    vim.keymap.set('n', '<leader>f', function() vim.lsp.buf.formatting() end, { buffer = true })
+    vim.keymap.set('n', '<leader>f', function() vim.lsp.buf.format({async=true}) end, { buffer = true })
 end
 
 
@@ -138,7 +145,7 @@ local coq = require('coq')
 
 -- Use a loop to conveniently call 'setup' on multiple servers and
 -- map buffer local keybindings when the language server attaches
-local servers = { 'gopls', 'rust_analyzer', 'zls', 'clangd', 'hls' }
+local servers = { 'gopls', 'rust_analyzer', 'zls', 'clangd', 'hls', 'bashls' }
 for _, lsp in ipairs(servers) do
     nvim_lsp[lsp].setup(
         coq.lsp_ensure_capabilities({
@@ -302,6 +309,21 @@ require('packer').startup(function(use)
             vim.api.nvim_set_keymap('n', '<leader>er', '<cmd>ConjureEvalRootForm<CR>', { noremap = true, silent = true })
             vim.api.nvim_set_keymap('n', '<leader>ec', '<cmd>ConjureEvalReplaceForm<CR>', { noremap = true, silent = true })
 
+        end
+    }
+    use { 'mfussenegger/nvim-dap',
+        config = function()
+            local dap = require('dap')
+            vim.keymap.set("n", "<leader>b", function() dap.toggle_breakpoint() end)
+            vim.keymap.set("n", "<F5>", function() dap.continue() end)
+            vim.keymap.set("n", "<F10>", function() dap.step_over() end)
+            vim.keymap.set("n", "<F11>", function() dap.step_into() end)
+        end
+    }
+    use { "rcarriga/nvim-dap-ui", requires = {"mfussenegger/nvim-dap"} }
+    use { "theHamsta/nvim-dap-virtual-text", requires = {"mfussenegger/nvim-dap", "nvim-treesitter/nvim-treesitter"},
+        config = function()
+            require("nvim-dap-virtual-text").setup()
         end
     }
 end)
