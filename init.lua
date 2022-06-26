@@ -28,25 +28,25 @@ vim.opt.laststatus = 3
 --vim.opt.background = "dark"
 
 -- mappings
-vim.api.nvim_set_keymap('n', '<Tab>', 'gt', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<S-Tab>', 'gT', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<S-t>', '<cmd>tabnew<CR>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('t', '<Esc>', "<C-\\><C-n>", { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<leader>v', "<cmd>vsplit<CR>", { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<leader>h', "<cmd>split<CR>", { noremap = true, silent = true })
+vim.keymap.set('n', '<Tab>', 'gt', { noremap = true, silent = true })
+vim.keymap.set('n', '<S-Tab>', 'gT', { noremap = true, silent = true })
+vim.keymap.set('n', '<S-t>', '<cmd>tabnew<CR>', { noremap = true, silent = true })
+vim.keymap.set('t', '<Esc>', "<C-\\><C-n>", { noremap = true, silent = true })
+vim.keymap.set('n', '<leader>v', "<cmd>vsplit<CR>", { noremap = true, silent = true })
+vim.keymap.set('n', '<leader>h', "<cmd>split<CR>", { noremap = true, silent = true })
 
 -- Auto closing is annoying just use this
-vim.api.nvim_set_keymap('i', '(<CR>', '(<CR>)<C-c>O', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('i', '[<CR>', '[<CR>]<C-c>O', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('i', '{<CR>', '{<CR>}<C-c>O', { noremap = true, silent = true })
+vim.keymap.set('i', '(<CR>', '(<CR>)<C-c>O', { noremap = true, silent = true })
+vim.keymap.set('i', '[<CR>', '[<CR>]<C-c>O', { noremap = true, silent = true })
+vim.keymap.set('i', '{<CR>', '{<CR>}<C-c>O', { noremap = true, silent = true })
 
 -- wrapping lines
-vim.api.nvim_set_keymap('n', 'j', 'gj', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', 'k', 'gk', { noremap = true, silent = true })
+vim.keymap.set('n', 'j', 'gj', { noremap = true, silent = true })
+vim.keymap.set('n', 'k', 'gk', { noremap = true, silent = true })
 
 --copypaste
-vim.api.nvim_set_keymap('n', '<leader>y', '"+y', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<leader>p', '"+p', { noremap = true, silent = true })
+vim.keymap.set('n', '<leader>y', '"+y', { noremap = true, silent = true })
+vim.keymap.set('n', '<leader>p', '"+p', { noremap = true, silent = true })
 
 
 
@@ -302,16 +302,16 @@ require('packer').startup(function(use)
     use { 'ms-jpq/chadtree',
         run = ':CHADdeps',
         config = function()
-            vim.api.nvim_set_keymap('n', '<F4>', "<cmd>CHADopen<CR>", { noremap = true, silent = true })
+            vim.keymap.set('n', '<F4>', "<cmd>CHADopen<CR>", { noremap = true, silent = true })
         end
     }
     use 'Olical/aniseed'
     use { 'Olical/conjure',
         config = function()
-            vim.api.nvim_set_keymap('n', '<leader>eb', '<cmd>ConjureEvalBuf<CR>', { noremap = true, silent = true })
-            vim.api.nvim_set_keymap('n', '<leader>ee', '<cmd>ConjureEvalCurrentForm<CR>', { noremap = true, silent = true })
-            vim.api.nvim_set_keymap('n', '<leader>er', '<cmd>ConjureEvalRootForm<CR>', { noremap = true, silent = true })
-            vim.api.nvim_set_keymap('n', '<leader>ec', '<cmd>ConjureEvalReplaceForm<CR>', { noremap = true, silent = true })
+            vim.keymap.set('n', '<leader>eb', '<cmd>ConjureEvalBuf<CR>', { noremap = true, silent = true })
+            vim.keymap.set('n', '<leader>ee', '<cmd>ConjureEvalCurrentForm<CR>', { noremap = true, silent = true })
+            vim.keymap.set('n', '<leader>er', '<cmd>ConjureEvalRootForm<CR>', { noremap = true, silent = true })
+            vim.keymap.set('n', '<leader>ec', '<cmd>ConjureEvalReplaceForm<CR>', { noremap = true, silent = true })
 
         end
     }
