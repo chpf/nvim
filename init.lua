@@ -7,6 +7,7 @@ vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
 vim.opt.softtabstop = 4
 vim.opt.expandtab = true
+vim.opt.autoindent= true
 vim.opt.number = true
 vim.opt.completeopt = { "menu", "menuone", "noselect" }
 vim.opt.clipboard = "unnamedplus"
@@ -25,28 +26,28 @@ vim.opt.inccommand = "nosplit"
 -- vim.opt.listchars:append("tab:▸")
 vim.opt.list = true
 vim.opt.laststatus = 3
---vim.opt.background = "dark"
 
 -- mappings
-vim.keymap.set('n', '<Tab>', 'gt', { noremap = true, silent = true })
-vim.keymap.set('n', '<S-Tab>', 'gT', { noremap = true, silent = true })
-vim.keymap.set('n', '<S-t>', '<cmd>tabnew<CR>', { noremap = true, silent = true })
-vim.keymap.set('t', '<Esc>', "<C-\\><C-n>", { noremap = true, silent = true })
-vim.keymap.set('n', '<leader>v', "<cmd>vsplit<CR>", { noremap = true, silent = true })
-vim.keymap.set('n', '<leader>h', "<cmd>split<CR>", { noremap = true, silent = true })
+vim.keymap.set('n', '<Tab>', 'gt')
+vim.keymap.set('n', '<S-Tab>', 'gT')
+vim.keymap.set('n', '<S-t>', '<cmd>tabnew<CR>')
+vim.keymap.set('t', '<Esc>', "<C-\\><C-n>")
+vim.keymap.set('n', '<leader>v', "<cmd>vsplit<CR>")
+vim.keymap.set('n', '<leader>h', "<cmd>split<CR>")
+vim.keymap.set("n", "<Leader>s", ":%s/<C-r><C-w>/") -- replace cword
 
 -- Auto closing is annoying just use this
-vim.keymap.set('i', '(<CR>', '(<CR>)<C-c>O', { noremap = true, silent = true })
-vim.keymap.set('i', '[<CR>', '[<CR>]<C-c>O', { noremap = true, silent = true })
-vim.keymap.set('i', '{<CR>', '{<CR>}<C-c>O', { noremap = true, silent = true })
+vim.keymap.set('i', '(<CR>', '(<CR>)<C-c>O')
+vim.keymap.set('i', '[<CR>', '[<CR>]<C-c>O')
+vim.keymap.set('i', '{<CR>', '{<CR>}<C-c>O')
 
 -- wrapping lines
-vim.keymap.set('n', 'j', 'gj', { noremap = true, silent = true })
-vim.keymap.set('n', 'k', 'gk', { noremap = true, silent = true })
+vim.keymap.set('n', 'j', 'gj')
+vim.keymap.set('n', 'k', 'gk')
 
 --copypaste
-vim.keymap.set('n', '<leader>y', '"+y', { noremap = true, silent = true })
-vim.keymap.set('n', '<leader>p', '"+p', { noremap = true, silent = true })
+vim.keymap.set('n', '<leader>y', '"+y')
+vim.keymap.set('n', '<leader>p', '"+p')
 
 
 
@@ -119,12 +120,12 @@ vim.api.nvim_create_autocmd({ "BufReadPost" }, {
 --
 require('packer').startup(function(use)
     use { 'https://github.com/rebelot/kanagawa.nvim',
-        disable = true,
+        disable = false,
         config = function()
             require('kanagawa').setup({
                 undercurl = true,           -- enable undercurls
                 commentStyle = { italic = false },
-                functionStyle = {},
+                functionStyle = { italic = false },
                 keywordStyle = { italic = false},
                 statementStyle = { bold = true },
                 typeStyle = {},
@@ -138,11 +139,11 @@ require('packer').startup(function(use)
                 overrides = {},
             })
         end,
-        run = "colorscheme kanagawa"
+        run = vim.cmd[[colorscheme kanagawa]]
     }
     use {'https://github.com/NLKNguyen/papercolor-theme', disable = true}
     use { 'https://github.com/projekt0n/github-nvim-theme',
-        disable = false,
+        disable = true,
         config = function()
             require('github-theme').setup({
                 dark_sidebar = false,
@@ -180,22 +181,22 @@ require('packer').startup(function(use)
                 -- Enable completion triggered by <c-x><c-o>
                 buf_set_option('omnifunc', 'v:lua.vim.lsp.omnifunc')
 
-                vim.keymap.set('n', 'gD', function() vim.lsp.buf.declaration() end, { buffer = true })
-                vim.keymap.set('n', 'gd', function() vim.lsp.buf.definition() end, { buffer = true })
-                vim.keymap.set('n', 'gr', function() vim.lsp.buf.references() end, { buffer = true })
-                vim.keymap.set('n', 'gi', function() vim.lsp.buf.implementation() end, { buffer = true })
-                vim.keymap.set('n', 'K', function() vim.lsp.buf.hover() end, { buffer = true })
-                vim.keymap.set('n', '<C-k>', function() vim.lsp.buf.signature_help() end, { buffer = true })
-                vim.keymap.set('n', 'gT', function() vim.lsp.buf.type_definition() end, { buffer = true })
-                vim.keymap.set('n', '<F2>', function() vim.lsp.buf.rename() end, { buffer = true })
-                vim.keymap.set('n', '<leader>ca', function() vim.lsp.buf.code_action() end, { buffer = true })
-                vim.keymap.set('n', '<leader>e', function() vim.diagnostic.open_float() end, { buffer = true })
-                vim.keymap.set('n', ']d', function() vim.diagnostic.goto_next() end, { buffer = true })
-                vim.keymap.set('n', '[d', function() vim.diagnostic.goto_prev() end, { buffer = true })
-                vim.keymap.set('n', '<leader>f', function() vim.lsp.buf.format({async=true}) end, { buffer = true })
+                vim.keymap.set('n', 'gD', function() vim.lsp.buf.declaration() end)
+                vim.keymap.set('n', 'gd', function() vim.lsp.buf.definition() end)
+                vim.keymap.set('n', 'gr', function() vim.lsp.buf.references() end)
+                vim.keymap.set('n', 'gi', function() vim.lsp.buf.implementation() end)
+                vim.keymap.set('n', 'K', function() vim.lsp.buf.hover() end)
+                vim.keymap.set('n', '<C-k>', function() vim.lsp.buf.signature_help() end)
+                vim.keymap.set('n', 'gT', function() vim.lsp.buf.type_definition() end)
+                vim.keymap.set('n', '<F2>', function() vim.lsp.buf.rename() end)
+                vim.keymap.set('n', '<leader>ca', function() vim.lsp.buf.code_action() end)
+                vim.keymap.set('n', '<leader>e', function() vim.diagnostic.open_float(nil, {focus=false}) end)
+                vim.keymap.set('n', ']d', function() vim.diagnostic.goto_next() end)
+                vim.keymap.set('n', '[d', function() vim.diagnostic.goto_prev() end)
+                vim.keymap.set('n', '<leader>f', function() vim.lsp.buf.format({async=true}) end)
             end
             -- attach servers via loop
-            local servers = { 'gopls', 'rust_analyzer', 'zls', 'clangd', 'hls', 'bashls' }
+            local servers = { 'gopls', 'rust_analyzer', 'zls', 'clangd', 'hls', 'tsserver', 'pyright' }
             for _, lsp in ipairs(servers) do
                 nvim_lsp[lsp].setup(
                     coq.lsp_ensure_capabilities({
@@ -239,15 +240,15 @@ require('packer').startup(function(use)
             require('Comment').setup({})
         end
     }
-    use { 'nvim-lualine/lualine.nvim',
+    use { 'nvim-lualine/lualine.nvim', requires = {"kyazdani42/nvim-web-devicons"},
         config = function()
             require('lualine').setup({
                 options = {
-                    --theme='kanagawa',
-                     theme = 'onelight',
+                    theme='kanagawa',
+                    --theme = 'onelight',
                     section_separators = '',
                     component_separators = '',
-                    -- globalstatus=true
+                    globalstatus=true
                 }
             })
         end
@@ -265,7 +266,8 @@ require('packer').startup(function(use)
         run = ':TSUpdate',
         config = function()
             require('nvim-treesitter.configs').setup({
-                ensure_installed = "all",
+                ensure_installed = {"go", "typescript", "zig", "json", "lua", "bash", "c", "cpp", "java", "haskell", "rust"},
+                --ensure_installed = "all",
                 highlight = {
                     enable = true,
                     additional_vim_regex_highlighting = false,
@@ -322,12 +324,34 @@ require('packer').startup(function(use)
             vim.keymap.set("n", "<F5>", function() dap.continue() end)
             vim.keymap.set("n", "<F10>", function() dap.step_over() end)
             vim.keymap.set("n", "<F11>", function() dap.step_into() end)
+
+            dap.adapters.lldb = {
+                type = 'executable',
+                command = '/home/ch/miniconda3/bin/lldb-vscode',
+                name = 'lldb'
+            }
+            dap.configurations.cpp = {
+                {
+                    name = 'Launch',
+                    type = 'lldb',
+                    request = 'launch',
+                    program = function()
+                        return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
+                    end,
+                    cwd = '${workspaceFolder}',
+                    stopOnEntry = false,
+                    args = {},
+                },
+            }
+            dap.configurations.c = dap.configurations.cpp
+            dap.configurations.rust = dap.configurations.cpp
         end
     }
     use { "rcarriga/nvim-dap-ui", requires = {"mfussenegger/nvim-dap"}, after='nvim-dap' }
     use { "theHamsta/nvim-dap-virtual-text", requires = {"mfussenegger/nvim-dap", "nvim-treesitter/nvim-treesitter"},
         config = function()
-            require("nvim-dap-virtual-text").setup()
+            require('nvim-dap-virtual-text').setup()
         end
     }
+    use { 'sindrets/diffview.nvim', requires = 'nvim-lua/plenary.nvim' }
 end)
