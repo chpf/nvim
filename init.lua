@@ -324,27 +324,36 @@ require('packer').startup(function(use)
             vim.keymap.set("n", "<F5>", function() dap.continue() end)
             vim.keymap.set("n", "<F10>", function() dap.step_over() end)
             vim.keymap.set("n", "<F11>", function() dap.step_into() end)
-
-            dap.adapters.lldb = {
+            dap.adapters.cppdbg = {
+                id = 'cppdbg',
                 type = 'executable',
-                command = '/home/ch/miniconda3/bin/lldb-vscode',
-                name = 'lldb'
+                command = '/home/ch/sources/vscode-cpptools/extension/debugAdapters/bin/OpenDebugAD7',
             }
             dap.configurations.cpp = {
                 {
-                    name = 'Launch',
-                    type = 'lldb',
-                    request = 'launch',
+                    name = "Launch file",
+                    type = "cppdbg",
+                    request = "launch",
                     program = function()
                         return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
                     end,
                     cwd = '${workspaceFolder}',
-                    stopOnEntry = false,
-                    args = {},
+                    stopOnEntry = true,
+                },
+                {
+                    name = 'Attach to gdbserver :1234',
+                    type = 'cppdbg',
+                    request = 'launch',
+                    MIMode = 'gdb',
+                    miDebuggerServerAddress = 'localhost:1234',
+                    miDebuggerPath = '/usr/bin/gdb',
+                    cwd = '${workspaceFolder}',
+                    program = function()
+                      return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
+                    end,
                 },
             }
             dap.configurations.c = dap.configurations.cpp
-            dap.configurations.rust = dap.configurations.cpp
         end
     }
     use { "rcarriga/nvim-dap-ui", requires = {"mfussenegger/nvim-dap"}, after='nvim-dap' }
