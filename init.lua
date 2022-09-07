@@ -126,10 +126,10 @@ require('packer').startup(function(use)
                 undercurl = true,           -- enable undercurls
                 commentStyle = { italic = false },
                 functionStyle = { italic = false },
-                keywordStyle = { italic = false},
-                statementStyle = { bold = true },
-                typeStyle = {},
-                variablebuiltinStyle = { italic = false},
+                keywordStyle = { italic = false },
+                statementStyle = { bold = true, italic = false },
+                typeStyle = {  bold = true, italic = false },
+                variablebuiltinStyle = { italic = false },
                 specialReturn = true,       -- special highlight for the return keyword
                 specialException = true,    -- special highlight for exception handling keywords
                 transparent = false,        -- do not set background color
