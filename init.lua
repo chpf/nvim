@@ -266,8 +266,7 @@ require('packer').startup(function(use)
         run = ':TSUpdate',
         config = function()
             require('nvim-treesitter.configs').setup({
-                ensure_installed = {"go", "typescript", "zig", "json", "lua", "bash", "c", "cpp", "java", "haskell", "rust"},
-                --ensure_installed = "all",
+                ensure_installed = {"go", "typescript", "zig", "json", "lua", "bash", "c", "cpp", "vim", "java", "haskell", "rust", 'help'},
                 highlight = {
                     enable = true,
                     additional_vim_regex_highlighting = false,
@@ -280,6 +279,15 @@ require('packer').startup(function(use)
                         "DodgerBlue",
                     },
                 },
+                incremental_selection = {
+                    enable = true,
+                    keymaps = {
+                        init_selection = "<CR>",
+                        node_incremental = "<CR>",
+                        scope_incremental = "<S-CR>",
+                        node_decremental = "<BS>",
+                    }
+                }
             })
         end
     }
