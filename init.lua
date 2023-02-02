@@ -305,5 +305,6 @@ require('packer').startup(function(use)
     }
     use { 'sindrets/diffview.nvim', requires = 'nvim-lua/plenary.nvim' }
     use { 'https://github.com/wellle/targets.vim'}
+    use { 'https://github.com/chaoren/vim-wordmotion' }
 
 end)
