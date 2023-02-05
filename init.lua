@@ -1,5 +1,3 @@
-vim.cmd [[packadd packer.nvim]]
-
 vim.g.mapleader = ','
 vim.g.localleader = ','
 
@@ -27,6 +25,10 @@ vim.opt.inccommand = "nosplit"
 vim.opt.list = true
 vim.opt.laststatus = 3
 
+
+vim.opt.guifont = {"Liga SFMono Nerd Font", ":12"}
+
+
 -- mappings
 vim.keymap.set('n', '<Tab>', 'gt')
 vim.keymap.set('n', '<S-Tab>', 'gT')
@@ -34,12 +36,13 @@ vim.keymap.set('n', '<S-t>', '<cmd>tabnew<CR>')
 vim.keymap.set('t', '<Esc>', "<C-\\><C-n>")
 vim.keymap.set('n', '<leader>v', "<cmd>vsplit<CR>")
 vim.keymap.set('n', '<leader>h', "<cmd>split<CR>")
-vim.keymap.set("n", "<Leader>s", ":%s/<C-r><C-w>/") -- replace cword
+vim.keymap.set("n", "<Leader>s", ":%s/<C-r><C-w>/") -- replace current word
 
 -- Auto closing is annoying just use this
 vim.keymap.set('i', '(<CR>', '(<CR>)<C-c>O')
 vim.keymap.set('i', '[<CR>', '[<CR>]<C-c>O')
 vim.keymap.set('i', '{<CR>', '{<CR>}<C-c>O')
+
 
 -- wrapping lines
 vim.keymap.set('n', 'j', 'gj')
@@ -49,6 +52,12 @@ vim.keymap.set('n', 'k', 'gk')
 vim.keymap.set('n', '<leader>y', '"+y')
 vim.keymap.set('n', '<leader>p', '"+p')
 
+
+vim.opt.background = "dark"
+-- vim.cmd.colorscheme "oxocarbon"
+vim.cmd.colorscheme "kanagawa"
+-- vim.opt.background = "light"
+-- vim.cmd.colorscheme "base16-standardized-light"
 
 
 -- fun stuff
@@ -119,6 +128,7 @@ vim.api.nvim_create_autocmd({ "BufReadPost" }, {
 -- Packer conig
 --
 require('packer').startup(function(use)
+    use {'wbthomason/packer.nvim'}
     use { 'https://github.com/rebelot/kanagawa.nvim',
         disable = false,
         config = function()
@@ -139,31 +149,16 @@ require('packer').startup(function(use)
                 overrides = {},
             })
         end,
-        run = vim.cmd[[colorscheme kanagawa]]
+        --run = vim.cmd[[colorscheme kanagawa]]
     }
-    use {'https://github.com/NLKNguyen/papercolor-theme', disable = true}
-    use { 'https://github.com/projekt0n/github-nvim-theme',
-        disable = true,
-        config = function()
-            require('github-theme').setup({
-                dark_sidebar = false,
-                dark_float = false,
-                theme_style = "light",
-                sidebars = { "qf", "vista_kind", "terminal", "packer" },
-                hide_inactive_statusline = false,
-                keyword_style = "bold",
-                function_style = "NONE",
-                comment_style = "NONE",
-                -- transparent=true,
-            })
-        end
-    }
+    use {'https://github.com/NLKNguyen/papercolor-theme', disable = false}
+    use {'https://github.com/RRethy/nvim-base16'}
+    use {'nyoom-engineering/oxocarbon.nvim'}
     use { 'https://github.com/junegunn/vim-easy-align',
         config = function()
             vim.keymap.set('n', 'ga', '<Plug>(EasyAlign)')
             vim.keymap.set('x', 'ga', '<Plug>(EasyAlign)')
         end }
-    use 'wbthomason/packer.nvim'
     use 'kyazdani42/nvim-web-devicons'
     use 'ziglang/zig.vim'
     use { 'kevinhwang91/nvim-bqf', ft = 'qf' }
@@ -196,7 +191,7 @@ require('packer').startup(function(use)
                 vim.keymap.set('n', '<leader>f', function() vim.lsp.buf.format({async=true}) end)
             end
             -- attach servers via loop
-            local servers = { 'gopls', 'rust_analyzer', 'zls', 'clangd', 'hls', 'tsserver', 'pyright' }
+            local servers = { 'gopls', 'rust_analyzer', 'zls', 'clangd', 'hls', 'tsserver', 'pyright', 'cmake' }
             for _, lsp in ipairs(servers) do
                 nvim_lsp[lsp].setup(
                     coq.lsp_ensure_capabilities({
@@ -204,7 +199,7 @@ require('packer').startup(function(use)
                     })
                 )
             end
-            --- LUA lsp CONFIG outside of loop, since it needs specific setup
+            --- LUA lsp CONFIG has special needs
             local runtime_path = vim.split(package.path, ';')
             table.insert(runtime_path, "lua/?.lua")
             table.insert(runtime_path, "lua/?/init.lua")
@@ -233,7 +228,7 @@ require('packer').startup(function(use)
         end
     }
     use { 'ms-jpq/coq_nvim',
-        run = ':COQdeps'
+        run = ':COQdeps',
     }
     use { 'numToStr/Comment.nvim',
         config = function()
@@ -241,10 +236,11 @@ require('packer').startup(function(use)
         end
     }
     use { 'nvim-lualine/lualine.nvim', requires = {"kyazdani42/nvim-web-devicons"},
+        after = 'nvim-base16',
         config = function()
             require('lualine').setup({
                 options = {
-                    theme='kanagawa',
+                    --theme='kanagawa',
                     --theme = 'onelight',
                     section_separators = '',
                     component_separators = '',
@@ -315,53 +311,8 @@ require('packer').startup(function(use)
             vim.keymap.set('n', '<F4>', "<cmd>CHADopen<CR>", { noremap = true, silent = true })
         end
     }
-    use 'Olical/aniseed'
-    use { 'Olical/conjure',
-        config = function()
-            vim.keymap.set('n', '<leader>eb', '<cmd>ConjureEvalBuf<CR>', { noremap = true, silent = true })
-            vim.keymap.set('n', '<leader>ee', '<cmd>ConjureEvalCurrentForm<CR>', { noremap = true, silent = true })
-            vim.keymap.set('n', '<leader>er', '<cmd>ConjureEvalRootForm<CR>', { noremap = true, silent = true })
-            vim.keymap.set('n', '<leader>ec', '<cmd>ConjureEvalReplaceForm<CR>', { noremap = true, silent = true })
-
-        end
-    }
-    use { 'mfussenegger/nvim-dap',
-        config = function()
-            local dap = require('dap')
-            vim.keymap.set("n", "<leader>b", function() dap.toggle_breakpoint() end)
-            vim.keymap.set("n", "<F5>", function() dap.continue() end)
-            vim.keymap.set("n", "<F10>", function() dap.step_over() end)
-            vim.keymap.set("n", "<F11>", function() dap.step_into() end)
-            local dap = require('dap')
-            dap.adapters.lldb = {
-              type = 'executable',
-              command = '/usr/bin/lldb-vscode-14',
-              name = 'lldb'
-            }
-            local dap = require('dap')
-            dap.configurations.cpp = {
-              {
-                name = 'Launch',
-                type = 'lldb',
-                request = 'launch',
-                program = function()
-                  return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
-                end,
-                cwd = '${workspaceFolder}',
-                stopOnEntry = false,
-                args = {},
-
-              },
-            }
-            dap.configurations.c = dap.configurations.cpp
-            dap.configurations.rust = dap.configurations.cpp
-        end
-    }
-    use { "rcarriga/nvim-dap-ui", requires = {"mfussenegger/nvim-dap"}, after='nvim-dap' }
-    use { "theHamsta/nvim-dap-virtual-text", requires = {"mfussenegger/nvim-dap", "nvim-treesitter/nvim-treesitter"},
-        config = function()
-            require('nvim-dap-virtual-text').setup()
-        end
-    }
     use { 'sindrets/diffview.nvim', requires = 'nvim-lua/plenary.nvim' }
+    use { 'https://github.com/wellle/targets.vim'}
+    use { 'https://github.com/chaoren/vim-wordmotion' }
+
 end)
