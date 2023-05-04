@@ -25,7 +25,8 @@ vim.o.timeout = true
 vim.o.timeoutlen = 300
 vim.mouse = 'a'
 
-if vim.fn.has('win32') then
+if vim.loop.os_uname().sysname ~= 'Linux' then
+--if vim.fn.has('win32') then (This shit doesnt work)
   vim.opt.shell = vim.fn.executable "pwsh" and "pwsh" or "powershell"
   vim.opt.shellcmdflag = "-NoLogo -NoProfile -ExecutionPolicy RemoteSigned -Command [Console]::InputEncoding=[Console]::OutputEncoding=[System.Text.Encoding]::UTF8;"
   vim.opt.shellredir = "-RedirectStandardOutput %s -NoNewWindow -Wait"
@@ -33,6 +34,8 @@ if vim.fn.has('win32') then
   vim.opt.shellquote = ""
   vim.opt.shellxquote = ""
   vim.keymap.set("n", "<Leader>init", "<cmd>e C:/Users/hansa/AppData/Local/nvim/init.lua<CR>")
+else
+  vim.opt.shell = vim.fn.executable 'nu' and '/home/christian/.cargo/bin/nu'
 end
 
 vim.keymap.set('n', '<Tab>', 'gt')
@@ -139,6 +142,7 @@ else
     -- vim.cmd('colorscheme habamax')
 	  vim.api.nvim_set_hl(0, "Normal",  { bg= nil })
 	  vim.api.nvim_set_hl(0, "MatchParen",  { bg= nil })
+	  vim.api.nvim_set_hl(0, "IndentBlanklineIndent", { bg=nil, fg='#5F5F5F' })
 	  vim.api.nvim_set_hl(0, "NonText",  { bg= nil })
 
 end
@@ -149,6 +153,8 @@ return require('packer').startup(function(use)
 	use { 'wellle/targets.vim' }
   use { 'chaoren/vim-wordmotion' }
 	use { 'nvim-lua/plenary.nvim'}
+	use { 'numToStr/Comment.nvim', config = function() require('Comment').setup({}) end }
+  use { "tpope/vim-fugitive" }
 	use { 'nvim-lualine/lualine.nvim',
 		config = function()
 			require('lualine').setup({
@@ -174,10 +180,14 @@ return require('packer').startup(function(use)
     config = function()
       require('nvim-treesitter.configs').setup {
         ensure_installed = { 'c', 'cpp', 'go', 'lua', 'python', 'rust', 'tsx', 'typescript', 'zig', 'vim' },
+        highlight = {
+          enable = true,
+          additional_vim_regex_highlighting = false,
+        }
       }
     end
   }
-	use { 'numToStr/Comment.nvim', config = function() require('Comment').setup({}) end }
+  use { 'nvim-treesitter/nvim-treesitter-context' }
 	use { 'nvim-telescope/telescope.nvim', requires = {'nvim-lua/plenary.nvim'},
 		config = function()
 			local telescope = require('telescope')
@@ -193,7 +203,7 @@ return require('packer').startup(function(use)
         },
       })
 			vim.keymap.set('n', '<Space>', require('telescope.builtin').find_files, { desc = 'Search Files' })
-      vim.keymap.set('n', '<Space>.', require('telescope.builtin').find_files({search_dirs = {"~/.config"}}), { desc = 'Search by Grep' })
+      -- vim.keymap.set('n', '<Space>.', require('telescope.builtin').find_files({search_dirs = {"~/.config"}}), { desc = 'Search by Grep' })
 			vim.keymap.set('n', '<Space>g', require('telescope.builtin').live_grep, { desc = 'Search by Grep' })
 			vim.keymap.set('n', '<Space>b', require('telescope.builtin').buffers, { desc = 'Find existing buffers' })
 			vim.keymap.set('n', '<Space>s', require('telescope.builtin').git_files, { desc = 'Search git files' })
@@ -321,7 +331,6 @@ return require('packer').startup(function(use)
       }
     end
   }
-  use { "tpope/vim-fugitive" }
   use { "mbbill/undotree",
     config = function()
       vim.keymap.set('n', '<leader>u', function() vim.cmd("UndotreeToggle") end )
